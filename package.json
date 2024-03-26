@@ -1,0 +1,30 @@
+{
+  "name": "cs2-best-deal-tweeter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "cs2-best-deal-tweeter",
+    "twitter-api",
+    "csfloat",
+    "cs2"
+  ],
+  "author": "Jesse Hamberg",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "buffer": "^6.0.3",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.5",
+    "got": "^14.2.1",
+    "http": "^0.0.1-security",
+    "oauth-1.0a": "^2.2.6",
+    "qs": "^6.12.0",
+    "querystring": "^0.2.1",
+    "readline": "^1.3.0"
+  },
+  "type": "module"
+}
