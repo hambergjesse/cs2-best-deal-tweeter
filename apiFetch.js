@@ -115,17 +115,36 @@ async function getRequest({ oauth_token, oauth_token_secret }, data) {
   }
 }
 
+function hasStoredAccessTokens() {
+  return (
+    process.env.ACCESS_TOKEN &&
+    process.env.ACCESS_TOKEN_SECRET &&
+    process.env.TWITTER_BEARER_TOKEN
+  );
+}
+
+function getStoredAccessTokens() {
+  return {
+    oauth_token: process.env.ACCESS_TOKEN,
+    oauth_token_secret: process.env.ACCESS_TOKEN_SECRET,
+  };
+}
+
 export async function createTweet(data) {
   try {
-    const oAuthRequestToken = await requestToken();
-
-    authorizeURL.searchParams.append(
-      "oauth_token",
-      oAuthRequestToken.oauth_token
-    );
-    console.log("Please go here and authorize:", authorizeURL.href);
-    const pin = await input("Paste the PIN here: ");
-    const oAuthAccessToken = await accessToken(oAuthRequestToken, pin.trim());
+    let oAuthAccessToken;
+    if (hasStoredAccessTokens()) {
+      oAuthAccessToken = getStoredAccessTokens();
+    } else {
+      const oAuthRequestToken = await requestToken();
+      authorizeURL.searchParams.append(
+        "oauth_token",
+        oAuthRequestToken.oauth_token
+      );
+      console.log("Please go here and authorize:", authorizeURL.href);
+      const pin = await input("Paste the PIN here: ");
+      oAuthAccessToken = await accessToken(oAuthRequestToken, pin.trim());
+    }
     const response = await getRequest(oAuthAccessToken, data);
     console.dir(response, {
       depth: null,
