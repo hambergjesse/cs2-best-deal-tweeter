@@ -15,11 +15,14 @@ export async function getDailyBestDeal() {
     });
 
     const data = response.data;
-    if (data.length > 0) {
+
+    const buyNowListings = data.filter((listing) => listing.type === "buy_now");
+
+    if (buyNowListings.length > 0) {
       let bestDealListing = null;
       let maxDiscount = 0;
 
-      data.forEach((listing) => {
+      buyNowListings.forEach((listing) => {
         const { price, item, seller } = listing;
         if (price && item && item.scm && item.scm.price) {
           const marketPriceDollars = convertToDollars(item.scm.price);
@@ -49,11 +52,10 @@ export async function getDailyBestDeal() {
         const link = `https://csfloat.com/item/${bestDealListing.id}`;
         return { listing: bestDealListing, link };
       } else {
-        // Fallback listing when no optimal deal is found
         console.log(
           "No optimal deal found. Returning the first listing as a fallback."
         );
-        const firstListing = data[0];
+        const firstListing = buyNowListings[0];
 
         const marketPriceDollars = convertToDollars(
           firstListing.reference.predicted_price
@@ -84,7 +86,7 @@ export async function getDailyBestDeal() {
         };
       }
     } else {
-      console.log("No listings found.");
+      console.log("No 'buy_now' listings found.");
       return null;
     }
   } catch (error) {
