@@ -27,7 +27,7 @@ cron.schedule("0 * * * *", async () => {
           2
         )} (${discount.toFixed(
           2
-        )}% off).\n\nCheck it out here: https://csfloat.com/item/${id}&ref=rattecs`,
+        )}% off).\n\nCheck it out here: https://csfloat.com/item/${id}?ref=rattecs`,
       };
 
       await createTweet(tweetData);
