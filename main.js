@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import { getDailyBestDeal } from "./floatFetch.js";
 import { createTweet } from "./apiFetch.js";
@@ -7,9 +6,9 @@ import cron from "node-cron";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-cron.schedule("30 7 * * *", async () => {
+cron.schedule("0 * * * *", async () => {
   try {
-    console.log("Running daily job...");
+    console.log("Running hourly job...");
     const bestDeal = await getDailyBestDeal();
     console.log(bestDeal);
 
