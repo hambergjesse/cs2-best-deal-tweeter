@@ -7,7 +7,7 @@ import cron from "node-cron";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-cron.schedule("0 9 * * *", async () => {
+cron.schedule("0 7 * * *", async () => {
   try {
     console.log("Running daily job...");
     const bestDeal = await getDailyBestDeal();
