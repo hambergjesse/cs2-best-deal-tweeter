@@ -1,20 +1,14 @@
-import express from "express";
 import { getDailyBestDeal } from "./floatFetch.js";
 import { createTweet } from "./apiFetch.js";
-import cron from "node-cron";
-
-const app = express();
-const PORT = process.env.PORT || 3000;
 
 function convertToDollars(priceInCents) {
   return priceInCents / 100;
 }
 
-cron.schedule("0 * * * *", async () => {
+async function manualTweeter() {
   try {
-    console.log("Running hourly job...");
+    console.log("Running manual tweet job...");
     const bestDeal = await getDailyBestDeal();
-    console.log(bestDeal);
 
     if (bestDeal?.listing) {
       const { id, price, item, reference } = bestDeal.listing;
@@ -35,16 +29,13 @@ cron.schedule("0 * * * *", async () => {
       };
 
       await createTweet(tweetData);
-
       console.log("Tweet posted successfully!");
     } else {
-      console.log("Failed to retrieve daily best deal");
+      console.log("Failed to retrieve daily best deal or no deal found");
     }
   } catch (error) {
     console.error("Error:", error);
   }
-});
+}
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+manualTweeter();

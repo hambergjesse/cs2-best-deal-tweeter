@@ -56,7 +56,6 @@ export async function getDailyBestDeal() {
           "No optimal deal found. Returning the first listing as a fallback."
         );
         const firstListing = buyNowListings[0];
-
         const marketPriceDollars = convertToDollars(
           firstListing.reference.predicted_price
         );
