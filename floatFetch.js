@@ -31,7 +31,7 @@ export async function getDailyBestDeal() {
             ((marketPriceDollars - listingPriceDollars) / marketPriceDollars) *
             100;
 
-          if (discount > maxDiscount) {
+          if (listingPriceDollars >= 5 && discount > maxDiscount) {
             maxDiscount = discount;
             bestDealListing = {
               id: listing.id,
@@ -55,34 +55,41 @@ export async function getDailyBestDeal() {
         console.log(
           "No optimal deal found. Returning the first listing as a fallback."
         );
-        const firstListing = buyNowListings[0];
-        const marketPriceDollars = convertToDollars(
-          firstListing.reference.predicted_price
+        const firstListing = buyNowListings.find(
+          (listing) => convertToDollars(listing.price) >= 5
         );
-        const listingPriceDollars = convertToDollars(firstListing.price);
-        const discount =
-          ((marketPriceDollars - listingPriceDollars) / marketPriceDollars) *
-          100;
+        if (firstListing) {
+          const marketPriceDollars = convertToDollars(
+            firstListing.reference.predicted_price
+          );
+          const listingPriceDollars = convertToDollars(firstListing.price);
+          const discount =
+            ((marketPriceDollars - listingPriceDollars) / marketPriceDollars) *
+            100;
 
-        console.log("Best Deal Listing (Fallback):");
-        console.log(`Listing ID: ${firstListing.id}`);
-        console.log(`Skin Name: ${firstListing.item.market_hash_name}`);
-        console.log(`Current Price: ${convertToDollars(firstListing.price)}`);
-        console.log(`Discount: ${parseFloat(discount.toFixed(2))}%`);
-        console.log(`Average Price: ${marketPriceDollars}`);
-        console.log(`Seller UID: ${firstListing.seller.steam_id}`);
-        console.log(
-          `Listing Image URL: https://community.cloudflare.steamstatic.com/economy/image/${firstListing.item.icon_url}`
-        );
-        console.log(`Float Value: ${firstListing.item.float_value}`);
-        console.log(`Inspect Link: ${firstListing.item.inspect_link}`);
-        console.log(
-          `Listing Link: https://csfloat.com/item/${firstListing.id}`
-        );
+          console.log("Best Deal Listing (Fallback):");
+          console.log(`Listing ID: ${firstListing.id}`);
+          console.log(`Skin Name: ${firstListing.item.market_hash_name}`);
+          console.log(`Current Price: ${convertToDollars(firstListing.price)}`);
+          console.log(`Discount: ${parseFloat(discount.toFixed(2))}%`);
+          console.log(`Average Price: ${marketPriceDollars}`);
+          console.log(`Seller UID: ${firstListing.seller.steam_id}`);
+          console.log(
+            `Listing Image URL: https://community.cloudflare.steamstatic.com/economy/image/${firstListing.item.icon_url}`
+          );
+          console.log(`Float Value: ${firstListing.item.float_value}`);
+          console.log(`Inspect Link: ${firstListing.item.inspect_link}`);
+          console.log(
+            `Listing Link: https://csfloat.com/item/${firstListing.id}`
+          );
 
-        return {
-          listing: firstListing,
-        };
+          return {
+            listing: firstListing,
+          };
+        } else {
+          console.log("No fallback listing found with price above $5.");
+          return null;
+        }
       }
     } else {
       console.log("No 'buy_now' listings found.");
