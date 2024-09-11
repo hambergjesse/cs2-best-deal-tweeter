@@ -16,7 +16,7 @@ async function manualTweeter() {
         skinName,
         discount,
         averagePrice,
-        sellerUID,
+        sellerUID, // This field is now optional
         imageURL,
         floatValue,
         inspectLink,
@@ -42,7 +42,6 @@ async function manualTweeter() {
         currentPrice &&
         discount !== undefined &&
         averagePrice &&
-        sellerUID &&
         imageURL &&
         inspectLink
       ) {
@@ -62,7 +61,7 @@ async function manualTweeter() {
 
         // Add float value information if available
         if (floatValue !== undefined) {
-          tweetText += `\nFloat Value: ${floatValue.toFixed(6)}`;
+          console.log("No float value found");
         }
 
         // Prepare tweet data
