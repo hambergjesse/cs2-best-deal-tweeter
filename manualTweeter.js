@@ -52,8 +52,13 @@ async function manualTweeter() {
           throw new Error("Price data is not in the correct format");
         }
 
-        // Append ref parameter to the link
-        const modifiedLink = `${bestDeal.link}&ref=rattecs`;
+        // Check if the link already contains a query string
+        let modifiedLink;
+        if (bestDeal.link.includes("?")) {
+          modifiedLink = `${bestDeal.link}&ref=rattecs`;
+        } else {
+          modifiedLink = `${bestDeal.link}?ref=rattecs`;
+        }
 
         // Prepare tweet text
         let tweetText = `${skinName} is currently available for $${currentPriceDollars.toFixed(
