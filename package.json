@@ -4,6 +4,9 @@
   "description": "",
   "main": "manualTweeter.js",
   "scripts": {
+    "install-and-fix": "npm install && npm audit fix --force",
+    "build": "npm run install-and-fix && npm run build:actual",
+    "build:actual": "node manualTweeter.js",
     "start": "node manualTweeter.js"
   },
   "keywords": [
