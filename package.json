@@ -4,9 +4,6 @@
   "description": "",
   "main": "manualTweeter.js",
   "scripts": {
-    "install-and-fix": "npm install && npm audit fix --force",
-    "build": "npm run install-and-fix && npm run build:actual",
-    "build:actual": "node manualTweeter.js",
     "start": "node manualTweeter.js"
   },
   "keywords": [
@@ -22,7 +19,7 @@
     "buffer": "^6.0.3",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "^5.0.0",
     "got": "^14.2.1",
     "http": "^0.0.1-security",
     "node-cron": "^3.0.3",
