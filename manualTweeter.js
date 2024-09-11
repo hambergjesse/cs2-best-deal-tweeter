@@ -1,6 +1,15 @@
 import { getDailyBestDeal } from "./floatFetch.js";
 import { createTweet } from "./apiFetch.js";
 
+console.log("Twitter Client ID:", process.env.TWITTER_CLIENT_ID);
+console.log("Twitter Client Secret:", process.env.TWITTER_CLIENT_SECRET);
+console.log("Consumer Key:", process.env.CONSUMER_KEY);
+console.log("Consumer Secret:", process.env.CONSUMER_SECRET);
+console.log("Access Token:", process.env.ACCESS_TOKEN);
+console.log("Access Token Secret:", process.env.ACCESS_TOKEN_SECRET);
+console.log("Twitter Bearer Token:", process.env.TWITTER_BEARER_TOKEN);
+console.log("Float API Key:", process.env.FLOAT_API_KEY);
+
 async function manualTweeter() {
   try {
     console.log("Running manual tweet job...");

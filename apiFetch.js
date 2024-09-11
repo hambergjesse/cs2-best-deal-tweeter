@@ -13,9 +13,6 @@ const consumer_secret = process.env.CONSUMER_SECRET;
 const accessTokenURL = "https://api.twitter.com/oauth/access_token";
 const endpointURL = "https://api.twitter.com/2/tweets";
 
-console.log(consumer_key);
-console.log(consumer_secret);
-
 const oauth = OAuth({
   consumer: {
     key: consumer_key,
