@@ -4,10 +4,9 @@ async function manualProcess() {
   try {
     console.log("Running manual process...");
     const bestDeal = await getDailyBestDeal();
-    console.log(bestDeal);
-    console.log("Manual process completed successfully");
+    console.log(bestDeal || "No deals found.");
   } catch (error) {
-    console.error("Error during manual process:", error);
+    console.error("Error during manual process:", error.message);
   }
 }
 

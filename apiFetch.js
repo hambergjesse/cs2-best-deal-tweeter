@@ -3,7 +3,6 @@ import crypto from "crypto";
 import OAuth from "oauth-1.0a";
 import qs from "querystring";
 import readline from "readline";
-
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -11,13 +10,12 @@ const { createInterface } = readline;
 
 const consumer_key = process.env.CONSUMER_KEY;
 const consumer_secret = process.env.CONSUMER_SECRET;
-
-const endpointURL = `https://api.twitter.com/2/tweets`;
-
-const requestTokenURL =
-  "https://api.twitter.com/oauth/request_token?oauth_callback=oob&x_auth_access_type=write";
-const authorizeURL = new URL("https://api.twitter.com/oauth/authorize");
 const accessTokenURL = "https://api.twitter.com/oauth/access_token";
+const endpointURL = "https://api.twitter.com/2/tweets";
+
+console.log(consumer_key);
+console.log(consumer_secret);
+
 const oauth = OAuth({
   consumer: {
     key: consumer_key,
@@ -29,15 +27,14 @@ const oauth = OAuth({
 });
 
 async function input(prompt) {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve) => {
     const rl = createInterface({
       input: process.stdin,
       output: process.stdout,
     });
-
-    rl.question(prompt, (out) => {
+    rl.question(prompt, (answer) => {
       rl.close();
-      resolve(out);
+      resolve(answer);
     });
   });
 }
@@ -45,49 +42,39 @@ async function input(prompt) {
 async function requestToken() {
   const authHeader = oauth.toHeader(
     oauth.authorize({
-      url: requestTokenURL,
+      url: "https://api.twitter.com/oauth/request_token?oauth_callback=oob&x_auth_access_type=write",
       method: "POST",
     })
   );
-
-  const req = await got.post(requestTokenURL, {
-    headers: {
-      Authorization: authHeader["Authorization"],
-    },
+  const response = await got.post({
+    url: "https://api.twitter.com/oauth/request_token?oauth_callback=oob&x_auth_access_type=write",
+    headers: { Authorization: authHeader["Authorization"] },
   });
-  if (req.body) {
-    return qs.parse(req.body);
-  } else {
-    throw new Error("Cannot get an OAuth request token");
-  }
+  return qs.parse(response.body);
 }
 
-async function accessToken({ oauth_token, oauth_token_secret }, verifier) {
+async function accessToken(oAuthRequestToken, verifier) {
   const authHeader = oauth.toHeader(
     oauth.authorize({
       url: accessTokenURL,
       method: "POST",
     })
   );
-  const path = `https://api.twitter.com/oauth/access_token?oauth_verifier=${verifier}&oauth_token=${oauth_token}`;
-  const req = await got.post(path, {
-    headers: {
-      Authorization: authHeader["Authorization"],
-    },
-  });
-  if (req.body) {
-    return qs.parse(req.body);
-  } else {
-    throw new Error("Cannot get an OAuth request token");
-  }
+  const response = await got.post(
+    `${accessTokenURL}?oauth_verifier=${verifier}&oauth_token=${oAuthRequestToken.oauth_token}`,
+    {
+      headers: { Authorization: authHeader["Authorization"] },
+    }
+  );
+  return qs.parse(response.body);
 }
 
-async function getRequest({ oauth_token, oauth_token_secret }, data) {
+async function tweetBestDeal(tweetData) {
+  const { oauth_token, oauth_token_secret } = getStoredAccessTokens();
   const token = {
     key: oauth_token,
     secret: oauth_token_secret,
   };
-
   const authHeader = oauth.toHeader(
     oauth.authorize(
       {
@@ -97,9 +84,8 @@ async function getRequest({ oauth_token, oauth_token_secret }, data) {
       token
     )
   );
-
-  const req = await got.post(endpointURL, {
-    json: data,
+  const response = await got.post(endpointURL, {
+    json: tweetData,
     responseType: "json",
     headers: {
       Authorization: authHeader["Authorization"],
@@ -108,19 +94,11 @@ async function getRequest({ oauth_token, oauth_token_secret }, data) {
       accept: "application/json",
     },
   });
-  if (req.body) {
-    return req.body;
-  } else {
-    throw new Error("Unsuccessful request");
-  }
+  return response.body;
 }
 
 function hasStoredAccessTokens() {
-  return (
-    process.env.ACCESS_TOKEN &&
-    process.env.ACCESS_TOKEN_SECRET &&
-    process.env.TWITTER_BEARER_TOKEN
-  );
+  return process.env.ACCESS_TOKEN && process.env.ACCESS_TOKEN_SECRET;
 }
 
 function getStoredAccessTokens() {
@@ -137,6 +115,7 @@ export async function createTweet(data) {
       oAuthAccessToken = getStoredAccessTokens();
     } else {
       const oAuthRequestToken = await requestToken();
+      const authorizeURL = new URL("https://api.twitter.com/oauth/authorize");
       authorizeURL.searchParams.append(
         "oauth_token",
         oAuthRequestToken.oauth_token
@@ -145,10 +124,8 @@ export async function createTweet(data) {
       const pin = await input("Paste the PIN here: ");
       oAuthAccessToken = await accessToken(oAuthRequestToken, pin.trim());
     }
-    const response = await getRequest(oAuthAccessToken, data);
-    console.dir(response, {
-      depth: null,
-    });
+    const response = await tweetBestDeal(data);
+    console.dir(response, { depth: null });
     return response;
   } catch (e) {
     console.error(e);
