@@ -43,7 +43,7 @@ async function manualTweeter() {
         discount !== undefined &&
         averagePrice &&
         imageURL &&
-        inspectLink
+        bestDeal.link
       ) {
         // Convert prices to dollars
         const currentPriceDollars = parseFloat(currentPrice);
@@ -52,12 +52,15 @@ async function manualTweeter() {
           throw new Error("Price data is not in the correct format");
         }
 
+        // Append ref parameter to the link
+        const modifiedLink = `${bestDeal.link}&ref=rattecs`;
+
         // Prepare tweet text
         let tweetText = `${skinName} is currently available for $${currentPriceDollars.toFixed(
           2
-        )} (${discount.toFixed(2)}% off).\n\nCheck it out here: ${
-          bestDeal.link
-        }`;
+        )} (${discount.toFixed(
+          2
+        )}% off).\n\nCheck it out here: ${modifiedLink}`;
 
         // Add float value information if available
         if (floatValue !== undefined) {

@@ -9,8 +9,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Scheduled job to run every hour
-cron.schedule("0 * * * *", async () => {
+// Scheduled job to run every 4 hours
+cron.schedule("0 */4 * * *", async () => {
   try {
     console.log("Running hourly job...");
     const bestDeal = await getDailyBestDeal();
@@ -50,7 +50,7 @@ cron.schedule("0 * * * *", async () => {
         discount !== undefined &&
         averagePrice &&
         sellerUID &&
-        inspectLink
+        bestDeal.link
       ) {
         // Convert prices to dollars
         const currentPriceDollars = parseFloat(currentPrice);
@@ -59,16 +59,19 @@ cron.schedule("0 * * * *", async () => {
           throw new Error("Price data is not in the correct format");
         }
 
+        // Append ref parameter to the link
+        const modifiedLink = `${bestDeal.link}&ref=rattecs`;
+
         // Prepare tweet text
         let tweetText = `${skinName} is currently available for $${currentPriceDollars.toFixed(
           2
-        )} (${discount.toFixed(2)}% off).\n\nCheck it out here: ${
-          bestDeal.link
-        }`;
+        )} (${discount.toFixed(
+          2
+        )}% off).\n\nCheck it out here: ${modifiedLink}`;
 
         // Add float value information if available
         if (floatValue !== undefined) {
-          tweetText += `\nFloat Value: ${floatValue.toFixed(6)}`;
+          console.log("No float value found");
         }
 
         // Prepare tweet data
