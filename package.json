@@ -2,9 +2,9 @@
   "name": "cs2-best-deal-tweeter",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "manualTweeter.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "node manualTweeter.js"
   },
   "keywords": [
     "cs2-best-deal-tweeter",
