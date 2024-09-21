@@ -1,7 +1,7 @@
 import { getDailyBestDeal } from "./floatFetch.js";
 import { createTweet } from "./apiFetch.js";
 
-async function manualTweeter() {
+export async function manualTweeter() {
   try {
     console.log("Running manual tweet job...");
     const bestDeal = await getDailyBestDeal();
